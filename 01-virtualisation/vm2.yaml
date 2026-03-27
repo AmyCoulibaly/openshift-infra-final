@@ -11,24 +11,29 @@ spec:
         kubevirt.io/domain: vm2
     spec:
       domain:
-        cpu: {cores: 1}
-        resources:
-          requests: {memory: 800Mi}
+        cpu:
+          cores: 1
         devices:
-          interfaces:
-            - name: default
-              masquerade: {}
           disks:
             - bootOrder: 1
-              disk: {bus: virtio}
+              disk:
+                bus: virtio
               name: rootdisk
-            - disk: {bus: virtio}
+            - disk:
+                bus: virtio
               name: cloudinit
+          interfaces:
+            - masquerade: {}
+              name: default
+        resources:
+          requests:
+            memory: 800Mi
       networks:
         - name: default
           pod: {}
       volumes:
-        - containerDisk: {image: 'quay.io/containerdisks/ubuntu:22.04'}
+        - containerDisk:
+            image: 'quay.io/containerdisks/ubuntu:22.04'
           name: rootdisk
         - cloudInitNoCloud:
             userData: |

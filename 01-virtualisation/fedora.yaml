@@ -1,0 +1,55 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: fedora-firewall
+  namespace: soxnaamycoulibaly-dev
+  labels:
+    app: fedora-firewall
+spec:
+  runStrategy: Manual
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: fedora-firewall
+    spec:
+      domain:
+        cpu: {cores: 1}
+        resources:
+          requests: {memory: 800Mi}
+          limits: {memory: 1Gi}
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
+          disks:
+            - bootOrder: 1
+              disk: {bus: virtio}
+              name: rootdisk
+            - disk: {bus: virtio}
+              name: cloudinitdisk
+        memory: {guest: 800Mi}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - containerDisk: {image: 'quay.io/containerdisks/fedora:39'}
+          name: rootdisk
+        - cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              user: fedora
+              password: 0t3k-4xrc-sdc5
+              chpasswd: { expire: False }
+              ssh_pwauth: True
+              runcmd:
+                - systemctl stop firewalld
+                - systemctl disable firewalld
+                - yum install -y iptables-services
+                - systemctl enable --now iptables
+                - iptables -P INPUT DROP
+                - iptables -A INPUT -i lo -j ACCEPT
+                - iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+                - iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+                - iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+                - service iptables save
+          name: cloudinitdisk

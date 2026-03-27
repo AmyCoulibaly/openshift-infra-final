@@ -1,7 +1,7 @@
 name: Deploy to OpenShift
 on:
   push:
-    branches: [ main ] # On s'assure que c'est bien 'main'
+    branches: [ Principaux ] # On s'assure que c'est bien 'main'
 
 jobs:
   deploy:

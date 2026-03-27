@@ -3,20 +3,8 @@ kind: VirtualMachine
 metadata:
   name: vm2
   namespace: soxnaamycoulibaly-dev
-  labels:
-    app: vm-web
 spec:
   runStrategy: Always
-  dataVolumeTemplates:
-    - metadata:
-        name: vm2-storage
-      spec:
-        source:
-          blank: {}
-        storage:
-          resources:
-            requests:
-              storage: 5Gi
   template:
     metadata:
       labels:
@@ -26,7 +14,6 @@ spec:
         cpu: {cores: 1}
         resources:
           requests: {memory: 800Mi}
-          limits: {memory: 1Gi}
         devices:
           interfaces:
             - name: default
@@ -36,19 +23,13 @@ spec:
               disk: {bus: virtio}
               name: rootdisk
             - disk: {bus: virtio}
-              name: datadisk
-            - disk: {bus: virtio}
-              name: cloudinitdisk
-        memory: {guest: 800Mi}
+              name: cloudinit
       networks:
         - name: default
           pod: {}
       volumes:
         - containerDisk: {image: 'quay.io/containerdisks/ubuntu:22.04'}
           name: rootdisk
-        - dataVolume:
-            name: vm2-storage
-          name: datadisk
         - cloudInitNoCloud:
             userData: |
               #cloud-config
@@ -56,4 +37,4 @@ spec:
               password: AmyPass2026
               chpasswd: { expire: False }
               ssh_pwauth: True
-            name: cloudinitdisk
+          name: cloudinit

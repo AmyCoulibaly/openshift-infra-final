@@ -1,7 +1,5 @@
 name: Deploy to OpenShift
-on:
-  push:
-    branches: [ Principaux ]
+on: [push]
 
 jobs:
   deploy:

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db
+  namespace: soxnaamycoulibaly-dev
+spec:
+  selector:
+    matchLabels: {app: mysql}
+  template:
+    metadata:
+      labels: {app: mysql}
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "AmyPass2026"
+        resources:
+          requests: {memory: "300Mi"}
+          limits: {memory: "512Mi"} # Limite réduite pour sécurité
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: soxnaamycoulibaly-dev
+spec:
+  selector: {app: mysql}
+  ports: [{port: 3306, targetPort: 3306}]

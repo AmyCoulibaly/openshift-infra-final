@@ -1,0 +1,44 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: vm2
+  namespace: soxnaamycoulibaly-dev
+  labels:
+    app: vm-web
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: vm2
+    spec:
+      domain:
+        cpu: {cores: 1}
+        resources:
+          requests: {memory: 650Mi}
+          limits: {memory: 750Mi}
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
+          disks:
+            - bootOrder: 1
+              disk: {bus: virtio}
+              name: rootdisk
+            - disk: {bus: virtio}
+              name: cloudinitdisk
+        memory: {guest: 650Mi}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - containerDisk: {image: 'quay.io/containerdisks/ubuntu:22.04'}
+          name: rootdisk
+        - cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              user: ubuntu
+              password: AmyPass2026
+              chpasswd: { expire: False }
+              ssh_pwauth: True
+          name: cloudinitdisk

@@ -8,6 +8,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # --- NOUVELLE ÉTAPE : On installe le logiciel "oc" sur l'ordinateur GitHub ---
+    - name: Install OpenShift CLI
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+
     - name: Authenticate with OpenShift
       uses: redhat-actions/oc-login@v1
       with:

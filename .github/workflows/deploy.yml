@@ -1,4 +1,4 @@
-name: Déploiement
+name: Deploy to OpenShift
 on:
   push:
     branches: [ Principaux ]
@@ -7,17 +7,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Mise en place du travail
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Authentifier avec OpenShift
+    - name: Authenticate with OpenShift
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
 
-    - name: Appliquer la configuration
+    - name: Apply Configuration
       run: |
         oc apply -f 02-services/mysql.yaml
         oc apply -f web-service.yaml

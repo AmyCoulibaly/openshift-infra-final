@@ -7,6 +7,16 @@ metadata:
     app: vm-web
 spec:
   runStrategy: Always
+  dataVolumeTemplates:
+    - metadata:
+        name: vm2-storage
+      spec:
+        source:
+          blank: {}
+        storage:
+          resources:
+            requests:
+              storage: 10Gi # On passe à 10 Go !
   template:
     metadata:
       labels:
@@ -15,8 +25,8 @@ spec:
       domain:
         cpu: {cores: 1}
         resources:
-          requests: {memory: 650Mi}
-          limits: {memory: 750Mi}
+          requests: {memory: 800Mi} # Un peu plus de RAM pour Node.js
+          limits: {memory: 1Gi}
         devices:
           interfaces:
             - name: default
@@ -26,19 +36,29 @@ spec:
               disk: {bus: virtio}
               name: rootdisk
             - disk: {bus: virtio}
+              name: datadisk # Nouveau disque de 10 Go
+            - disk: {bus: virtio}
               name: cloudinitdisk
-        memory: {guest: 650Mi}
+        memory: {guest: 800Mi}
       networks:
         - name: default
           pod: {}
       volumes:
         - containerDisk: {image: 'quay.io/containerdisks/ubuntu:22.04'}
           name: rootdisk
+        - dataVolume:
+            name: vm2-storage
+          name: datadisk
         - cloudInitNoCloud:
+            name: cloudinitdisk
             userData: |
               #cloud-config
               user: ubuntu
               password: AmyPass2026
               chpasswd: { expire: False }
               ssh_pwauth: True
-          name: cloudinitdisk
+              # Les commandes suivantes installent tout automatiquement :
+              runcmd:
+                - apt-get update
+                - apt-get install -y nginx nodejs npm
+                - systemctl enable --now nginx

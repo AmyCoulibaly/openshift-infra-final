@@ -1,28 +1,28 @@
-name: Deploy to OpenShift
+name: Déploiement
 on:
   push:
-    branches: [ Principaux ] # On s'assure que c'est bien 'main'
+    branches: [ Principaux ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
+    - name: Mise en place du travail
       uses: actions/checkout@v4
 
-    - name: Authenticate with OpenShift
+    - name: Authentifier avec OpenShift
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server: ${{ secrets.OPENSHIFT_SERVER }}
+        # ICI LES NOMS DOIVENT ÊTRE EXACTS
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
 
-    - name: Apply Configuration
+    - name: Appliquer la configuration
       run: |
-        # Cette commande ignore les erreurs de dossiers et applique tout ce qu'elle trouve
-        oc apply -f 02-services/mysql.yaml || oc apply -f mysql.yaml
+        oc apply -f 02-services/mysql.yaml
         oc apply -f web-service.yaml
-        oc apply -f 03-reseau/network-policy.yaml || oc apply -f network-policy.yaml
-        oc apply -f 03-reseau/route.yaml || oc apply -f route.yaml
-        oc apply -f 01-virtualisation/vm2.yaml || oc apply -f vm2.yaml
-        oc apply -f 01-virtualisation/fedora.yaml || oc apply -f fedora.yaml
+        oc apply -f 03-reseau/network-policy.yaml
+        oc apply -f 03-reseau/route.yaml
+        oc apply -f 01-virtualisation/vm2.yaml
+        oc apply -f 01-virtualisation/fedora.yaml

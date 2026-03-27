@@ -16,7 +16,7 @@ spec:
         storage:
           resources:
             requests:
-              storage: 10Gi
+              storage: 5Gi
   template:
     metadata:
       labels:
@@ -49,15 +49,11 @@ spec:
         - dataVolume:
             name: vm2-storage
           name: datadisk
-        - cloudInitNoCloud: # Correction ici : le type doit être au bon niveau
+        - cloudInitNoCloud:
             userData: |
               #cloud-config
               user: ubuntu
               password: AmyPass2026
               chpasswd: { expire: False }
               ssh_pwauth: True
-              runcmd:
-                - apt-get update
-                - apt-get install -y nginx nodejs npm
-                - systemctl enable --now nginx
-          name: cloudinitdisk
+            name: cloudinitdisk

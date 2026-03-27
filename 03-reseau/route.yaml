@@ -1,0 +1,9 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: route-web
+  namespace: soxnaamycoulibaly-dev
+spec:
+  to: {kind: Service, name: service-web}
+  port: {targetPort: 80}
+  tls: {termination: edge}

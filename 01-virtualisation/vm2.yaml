@@ -6,13 +6,8 @@ metadata:
 spec:
   runStrategy: Always
   template:
-    metadata:
-      labels:
-        kubevirt.io/domain: vm2
     spec:
       domain:
-        cpu:
-          cores: 1
         devices:
           disks:
             - bootOrder: 1
@@ -21,7 +16,7 @@ spec:
               name: rootdisk
             - disk:
                 bus: virtio
-              name: cloudinit
+              name: cloudinitvolume # Doit être identique au nom dans volumes
           interfaces:
             - masquerade: {}
               name: default
@@ -42,4 +37,4 @@ spec:
               password: AmyPass2026
               chpasswd: { expire: False }
               ssh_pwauth: True
-          name: cloudinit
+          name: cloudinitvolume # Doit être identique au nom dans disks

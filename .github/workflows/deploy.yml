@@ -1,7 +1,7 @@
 name: Deploy to OpenShift
 on:
   push:
-    branches: [ main ] # Vérifie bien si ta branche s'appelle main ou master
+    branches: [ main ] # On s'assure que c'est bien 'main'
 
 jobs:
   deploy:
@@ -19,9 +19,10 @@ jobs:
 
     - name: Apply Configuration
       run: |
-        # On applique dans l'ordre pour ne pas saturer le quota
-        oc apply -f 02-services/mysql.yaml
+        # Cette commande ignore les erreurs de dossiers et applique tout ce qu'elle trouve
+        oc apply -f 02-services/mysql.yaml || oc apply -f mysql.yaml
         oc apply -f web-service.yaml
-        oc apply -f 03-reseau/
-        oc apply -f 01-virtualisation/vm2.yaml
-        oc apply -f 01-virtualisation/fedora.yaml
+        oc apply -f 03-reseau/network-policy.yaml || oc apply -f network-policy.yaml
+        oc apply -f 03-reseau/route.yaml || oc apply -f route.yaml
+        oc apply -f 01-virtualisation/vm2.yaml || oc apply -f vm2.yaml
+        oc apply -f 01-virtualisation/fedora.yaml || oc apply -f fedora.yaml
